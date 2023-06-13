@@ -53,4 +53,9 @@ public class CourseBaseMapperTests {
         System.out.println(list);
         System.err.println(JSON.toJSONString(list));
     }
+
+    @Test
+    void testCourseBaseService1(){
+
+    }
 }

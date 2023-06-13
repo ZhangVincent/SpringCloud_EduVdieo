@@ -2,6 +2,8 @@ package com.eduvideo.content.api;
 
 import com.eduvideo.base.model.PageParams;
 import com.eduvideo.base.model.PageResult;
+import com.eduvideo.content.model.dto.AddCourseDto;
+import com.eduvideo.content.model.dto.CourseBaseInfoDto;
 import com.eduvideo.content.model.dto.QueryCourseParamsDto;
 import com.eduvideo.content.model.po.CourseBase;
 import com.eduvideo.content.service.CourseBaseService;
@@ -26,17 +28,23 @@ public class CourseBaseInfoController {
     private CourseBaseService courseBaseService;
 
     /***
-    * @description 使用swagger测试接口，访问http://localhost:63040/content/swagger-ui.html
-    * @param pageParams
+     * @description 使用swagger测试接口，访问http://localhost:63040/content/swagger-ui.html
+     * @param pageParams
      * @param queryCourseParamsDto
-    * @return 查询课程信息分页
-    * @author zkp15
-    * @date 2023/6/13 9:39
-    */
+     * @return 查询课程信息分页
+     * @author zkp15
+     * @date 2023/6/13 9:39
+     */
     @ApiOperation("课程查询接口")
     @PostMapping("/course/list")
     public PageResult<CourseBase> list(PageParams pageParams, @RequestBody QueryCourseParamsDto queryCourseParamsDto) {
         PageResult<CourseBase> courseBasePageResult = courseBaseService.queryCourseBaseList(pageParams, queryCourseParamsDto);
         return courseBasePageResult;
+    }
+
+    @PostMapping("/course")
+    public CourseBaseInfoDto createCourseBase(@RequestBody AddCourseDto addCourseDto) {
+        Long companyId = 22L;
+        return courseBaseService.createCourseBase(companyId, addCourseDto);
     }
 }
