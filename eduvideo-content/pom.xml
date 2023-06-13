@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.eduvideo</groupId>
+        <artifactId>eduvideo-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../eduvideo-parent</relativePath>
+    </parent>
+
+    <groupId>com.eduvideo</groupId>
+    <artifactId>eduvideo-content</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>eduvideo-content</name>
+    <description>eduvideo-content</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>eduvideo-content-api</module>
+        <module>eduvideo-content-model</module>
+        <module>eduvideo-content-service</module>
+    </modules>
+
+</project>
