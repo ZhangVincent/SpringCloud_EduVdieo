@@ -1,8 +1,14 @@
 package com.eduvideo.base.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.text.StrBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author zkp15
@@ -16,7 +22,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(EduVideoException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public RestErrorResponse customException(EduVideoException e){
+    public RestErrorResponse doCustomException(EduVideoException e){
         log.error("【自定义异常】{}",e.getErrMessage(),e);
 
         return new RestErrorResponse(e.getErrMessage());
@@ -26,9 +32,25 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public RestErrorResponse exception(Exception e) {
+    public RestErrorResponse doException(Exception e) {
         log.error("【系统异常】{}",e.getMessage(),e);
 
         return new RestErrorResponse(CommonError.UNKOWN_ERROR.getErrMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public RestErrorResponse doMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        BindingResult bindingResult = e.getBindingResult();
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        StringBuffer errMsg = new StringBuffer();
+
+        fieldErrors.stream().forEach(err -> {
+            errMsg.append(err.getDefaultMessage()).append(", ");
+        });
+        log.error("【数据异常】{}",errMsg.toString());
+
+        return new RestErrorResponse(errMsg.toString());
     }
 }

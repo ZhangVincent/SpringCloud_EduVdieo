@@ -1,5 +1,6 @@
 package com.eduvideo.content.api;
 
+import com.eduvideo.base.exception.ValidationGroups;
 import com.eduvideo.base.model.PageParams;
 import com.eduvideo.base.model.PageResult;
 import com.eduvideo.content.model.dto.AddCourseDto;
@@ -10,6 +11,7 @@ import com.eduvideo.content.service.CourseBaseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,8 +44,15 @@ public class CourseBaseInfoController {
         return courseBasePageResult;
     }
 
+    /***
+    * @description 添加课程接口，使用idea插件httpclient测试
+    * @param addCourseDto
+    * @return com.eduvideo.content.model.dto.CourseBaseInfoDto
+    * @author zkp15
+    * @date 2023/6/13 23:27
+    */
     @PostMapping("/course")
-    public CourseBaseInfoDto createCourseBase(@RequestBody AddCourseDto addCourseDto) {
+    public CourseBaseInfoDto createCourseBase(@RequestBody @Validated({ValidationGroups.Inster.class}) AddCourseDto addCourseDto) {
         Long companyId = 22L;
         return courseBaseService.createCourseBase(companyId, addCourseDto);
     }
