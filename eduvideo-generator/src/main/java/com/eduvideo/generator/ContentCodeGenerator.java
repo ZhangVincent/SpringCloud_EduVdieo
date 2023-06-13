@@ -24,16 +24,16 @@ public class ContentCodeGenerator {
 	private static final String DATA_SOURCE_PASSWORD  = "28717774";
 	//生成的表
 	private static final String[] TABLE_NAMES = new String[]{
-//			"mq_message",
-//			"mq_message_history"
-			 "course_base",
-			 "course_market",
-			 "teachplan",
-			 "teachplan_media",
-			 "course_teacher",
-			 "course_publish",
-			 "course_publish_pre"
-//			"course_category"
+			"mq_message",
+			"mq_message_history",
+//			 "course_base",
+//			 "course_market",
+//			 "teachplan",
+//			 "teachplan_media",
+//			 "course_teacher",
+//			 "course_publish",
+//			 "course_publish_pre"
+			"course_category"
 	};
 
 	// TODO 默认生成entity，需要生成DTO修改此变量

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eduvideo.system.mapper.DictionaryMapper;
 import com.eduvideo.system.model.po.Dictionary;
-import com.xuecheng.system.service.DictionaryService;
+import com.eduvideo.system.service.DictionaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

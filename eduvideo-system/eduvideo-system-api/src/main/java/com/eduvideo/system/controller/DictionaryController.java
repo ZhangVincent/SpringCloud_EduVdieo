@@ -1,7 +1,7 @@
 package com.eduvideo.system.controller;
 
-import com.xuecheng.system.model.po.Dictionary;
-import com.xuecheng.system.service.DictionaryService;
+import com.eduvideo.system.model.po.Dictionary;
+import com.eduvideo.system.service.DictionaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
