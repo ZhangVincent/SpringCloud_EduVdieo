@@ -35,8 +35,8 @@ public class CourseBaseMapperTests {
     @Test
     void testCourseBaseService(){
         QueryCourseParamsDto courseParamsDto = new QueryCourseParamsDto();
-        courseParamsDto.setAuditStatus("202001");
-        courseParamsDto.setPublishStatus("203001");
+//        courseParamsDto.setAuditStatus("202001");
+//        courseParamsDto.setPublishStatus("203001");
         PageResult<CourseBase> pageResult = courseBaseService.queryCourseBaseList(new PageParams(), courseParamsDto);
         System.err.println(pageResult);
     }
