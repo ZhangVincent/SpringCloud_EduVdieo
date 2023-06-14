@@ -6,15 +6,14 @@ import com.eduvideo.base.model.PageResult;
 import com.eduvideo.content.model.dto.AddCourseDto;
 import com.eduvideo.content.model.dto.CourseBaseInfoDto;
 import com.eduvideo.content.model.dto.QueryCourseParamsDto;
+import com.eduvideo.content.model.dto.EditCourseDto;
 import com.eduvideo.content.model.po.CourseBase;
 import com.eduvideo.content.service.CourseBaseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author zkp15
@@ -52,8 +51,46 @@ public class CourseBaseInfoController {
     * @date 2023/6/13 23:27
     */
     @PostMapping("/course")
-    public CourseBaseInfoDto createCourseBase(@RequestBody @Validated({ValidationGroups.Inster.class}) AddCourseDto addCourseDto) {
-        Long companyId = 22L;
+    public CourseBaseInfoDto createCourseBase(@RequestBody @Validated({ValidationGroups.Insert.class}) AddCourseDto addCourseDto) {
+        Long companyId = 1232141425L;
         return courseBaseService.createCourseBase(companyId, addCourseDto);
+    }
+
+    /***
+    * @description 修改课程信息之前根据id查询课程信息
+    * @param courseId
+    * @return com.eduvideo.content.model.dto.CourseBaseInfoDto
+    * @author zkp15
+    * @date 2023/6/14 21:26
+    */
+    @GetMapping("/course/{courseId}")
+    public CourseBaseInfoDto getCourseBaseById(@PathVariable Long courseId) {
+        return courseBaseService.getCourseBaseById(courseId);
+    }
+
+    /***
+    * @description 修改课程信息
+    * @param updateCourseDto
+    * @return com.eduvideo.content.model.dto.CourseBaseInfoDto
+    * @author zkp15
+    * @date 2023/6/14 21:27
+    */
+    @PutMapping("/course")
+    public CourseBaseInfoDto modifyCourseBase(@RequestBody @Validated({ValidationGroups.Update.class}) EditCourseDto updateCourseDto) {
+        Long companyId = 1232141425L;
+        return courseBaseService.modifyCourseBase(companyId, updateCourseDto);
+    }
+
+    /***
+    * @description 删除课程信息
+    * @param courseId
+    * @return void
+    * @author zkp15
+    * @date 2023/6/14 21:27
+    */
+    @DeleteMapping("course/{courseId}")
+    public void removeCourseBase(@PathVariable Long courseId){
+        Long companyId=1232141425L;
+        boolean b = courseBaseService.removeCourseBase(companyId, courseId);
     }
 }

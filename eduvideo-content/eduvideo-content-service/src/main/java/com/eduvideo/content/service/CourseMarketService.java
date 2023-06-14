@@ -13,4 +13,5 @@ import com.eduvideo.content.model.po.CourseMarket;
  */
 public interface CourseMarketService extends IService<CourseMarket> {
 
+    void deleteByCourseId(Long courseId);
 }

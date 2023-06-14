@@ -8,8 +8,15 @@ package com.eduvideo.base.exception;
  */
 public class ValidationGroups {
 
-    public interface Inster{};
-    public interface Update{};
-    public interface Delete{};
+    public interface Insert {
+    }
+
+
+    public interface Update {
+    }
+
+
+    public interface Delete {
+    }
 
 }

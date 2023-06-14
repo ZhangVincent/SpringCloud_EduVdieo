@@ -5,9 +5,9 @@ import com.eduvideo.base.model.PageParams;
 import com.eduvideo.base.model.PageResult;
 import com.eduvideo.content.model.dto.AddCourseDto;
 import com.eduvideo.content.model.dto.CourseBaseInfoDto;
+import com.eduvideo.content.model.dto.EditCourseDto;
 import com.eduvideo.content.model.dto.QueryCourseParamsDto;
 import com.eduvideo.content.model.po.CourseBase;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * <p>
@@ -37,4 +37,33 @@ public interface CourseBaseService extends IService<CourseBase> {
     * @date 2023/6/13 19:56
     */
     public CourseBaseInfoDto createCourseBase(Long companyId,AddCourseDto addCourseDto);
+
+    /***
+     * @description 根据课程id查询课程信息和课程营销信息，组装数据格式并返回
+     * @param courseId
+     * @return com.eduvideo.content.model.dto.CourseBaseInfoDto
+     * @author zkp15
+     * @date 2023/6/14 10:38
+     */
+    public CourseBaseInfoDto getCourseBaseById(Long courseId) ;
+
+    /***
+    * @description 课程信息修改接口
+    * @param companyId
+     * @param updateCourseDto
+    * @return com.eduvideo.content.model.dto.CourseBaseInfoDto
+    * @author zkp15
+    * @date 2023/6/14 10:41
+    */
+    CourseBaseInfoDto modifyCourseBase(Long companyId, EditCourseDto updateCourseDto);
+
+    /***
+    * @description 删除课程信息
+    * @param companyId
+    * @param courseId
+     * @return void
+    * @author zkp15
+    * @date 2023/6/14 17:32
+    */
+    boolean removeCourseBase(Long companyId, Long courseId);
 }

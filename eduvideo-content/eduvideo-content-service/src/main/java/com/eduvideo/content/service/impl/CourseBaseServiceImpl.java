@@ -3,8 +3,14 @@ package com.eduvideo.content.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.eduvideo.base.exception.EduVideoException;
 import com.eduvideo.content.mapper.CourseCategoryMapper;
+import com.eduvideo.content.mapper.TeachplanMapper;
+import com.eduvideo.content.model.dto.EditCourseDto;
 import com.eduvideo.content.model.po.CourseCategory;
 import com.eduvideo.content.model.po.CourseMarket;
+import com.eduvideo.content.model.po.Teachplan;
+import com.eduvideo.content.service.CourseMarketService;
+import com.eduvideo.content.service.CourseTeacherService;
+import com.eduvideo.content.service.TeachplanService;
 import org.apache.commons.lang.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -24,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -41,7 +48,15 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
     @Autowired
     private CourseMarketMapper courseMarketMapper;
     @Autowired
+    private CourseMarketService courseMarketService;
+    @Autowired
     private CourseCategoryMapper courseCategoryMapper;
+    @Autowired
+    private TeachplanMapper teachplanMapper;
+    @Autowired
+    private TeachplanService teachplanService;
+    @Autowired
+    private CourseTeacherService courseTeacherService;
 
     @Override
     public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto) {
@@ -63,13 +78,13 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
     @Override
     public CourseBaseInfoDto createCourseBase(Long companyId, AddCourseDto addCourseDto) {
         // 校验数据业务合法性
-        if (addCourseDto.getCharge().equals("201001") && (addCourseDto.getPrice()==null || addCourseDto.getPrice().floatValue()<=0)){
-            throw new EduVideoException("选择收费但是没有填写价格");
-        }
+//        if (addCourseDto.getCharge().equals("201001") && (addCourseDto.getPrice() == null || addCourseDto.getPrice().floatValue() <= 0)) {
+//            throw new EduVideoException("选择收费但是没有填写价格");
+//        }
 
         // 数据格式转换，向base和market表中插入数据
         CourseBase courseBase = new CourseBase();
-        BeanUtils.copyProperties(addCourseDto,courseBase);
+        BeanUtils.copyProperties(addCourseDto, courseBase);
         courseBase.setCompanyId(companyId);
 //        courseBase.setCompanyName();
         courseBase.setCreateDate(LocalDateTime.now());
@@ -80,24 +95,114 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
         int insert = courseBaseMapper.insert(courseBase);
         Long courseId = courseBase.getId();
 
-        CourseMarket courseMarket = new CourseMarket();
-        BeanUtils.copyProperties(addCourseDto,courseMarket);
-        courseMarket.setId(courseId);
-        int insert1 = courseMarketMapper.insert(courseMarket);
+//        CourseMarket courseMarket = new CourseMarket();
+//        BeanUtils.copyProperties(addCourseDto, courseMarket);
+//        courseMarket.setId(courseId);
+//        int insert1 = courseMarketMapper.insert(courseMarket);
 
-        if(insert<=0 || insert1<=0){
-            throw new RuntimeException("新增课程基本信息失败");
+        Integer insert1 = addOrUpdateCourseMarket(courseId, addCourseDto);
+
+        if (insert <= 0 || insert1 <= 0) {
+            EduVideoException.cast("新增课程基本信息失败");
         }
+
+        return getCourseBaseById(courseId);
+    }
+
+    @Override
+    public CourseBaseInfoDto getCourseBaseById(Long courseId) {
+        // 查询信息
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        CourseMarket courseMarket = courseMarketMapper.selectById(courseId);
 
         // 组装数据并返回
         CourseBaseInfoDto courseBaseInfoDto = new CourseBaseInfoDto();
-        BeanUtils.copyProperties(courseBase,courseBaseInfoDto);
-        BeanUtils.copyProperties(courseMarket,courseBaseInfoDto);
+        BeanUtils.copyProperties(courseBase, courseBaseInfoDto);
+
+        if (courseMarket != null) {
+            BeanUtils.copyProperties(courseMarket, courseBaseInfoDto);
+        }
+
         CourseCategory courseCategoryMt = courseCategoryMapper.selectById(courseBase.getMt());
         courseBaseInfoDto.setMtName(courseCategoryMt.getName());
         CourseCategory courseCategorySt = courseCategoryMapper.selectById(courseBase.getSt());
         courseBaseInfoDto.setStName(courseCategorySt.getName());
 
         return courseBaseInfoDto;
+    }
+
+    @Transactional
+    @Override
+    public CourseBaseInfoDto modifyCourseBase(Long companyId, EditCourseDto updateCourseDto) {
+        // 根据课程id查询课程信息
+        Long courseId = updateCourseDto.getId();
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+
+        // 校验修改权限
+        if (!courseBase.getCompanyId().equals(companyId)) {
+            EduVideoException.cast("不是企业用户，没有修改权限");
+        }
+
+        // 封装课程信息对象和课程营销对象，并修改数据库
+        CourseBase courseBaseUpdate = new CourseBase();
+        BeanUtils.copyProperties(updateCourseDto, courseBaseUpdate);
+        courseBaseUpdate.setChangeDate(LocalDateTime.now());
+        int update = courseBaseMapper.updateById(courseBaseUpdate);
+
+        Integer update1 = addOrUpdateCourseMarket(courseId, updateCourseDto);
+
+        if (update <= 0 || update1 <= 0) {
+            EduVideoException.cast("修改课程基本信息失败");
+        }
+
+        // 封装数据格式并返回
+        return getCourseBaseById(courseId);
+    }
+
+    @Transactional
+    @Override
+    public boolean removeCourseBase(Long companyId, Long courseId) {
+        // 校验用户权限
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if (!courseBase.getCompanyId().equals(companyId)) {
+            EduVideoException.cast("不是企业用户，没有删除权限");
+        }
+        // 删除课程营销信息
+        courseMarketService.deleteByCourseId(courseId);
+
+        // 删除课程计划
+        teachplanService.deleteByCourseId(courseId);
+
+        // 删除课程教师信息
+        courseTeacherService.deleteByCourseId(courseId);
+
+        // 删除课程
+        int delete = courseBaseMapper.deleteById(courseId);
+        if (delete <= 0) {
+            EduVideoException.cast("删除课程基本信息失败");
+        }
+        return delete > 0;
+    }
+
+    /***
+     * @description 校验数据业务合法性，新增或修改课程营销数据
+     * @param courseId
+     * @param dto
+     * @return java.lang.Integer
+     * @author zkp15
+     * @date 2023/6/14 10:58
+     */
+    private Integer addOrUpdateCourseMarket(Long courseId, AddCourseDto dto) {
+        // 校验数据业务合法性
+        if (dto.getCharge().equals("201001") && (dto.getPrice() == null || dto.getPrice().floatValue() <= 0)) {
+            throw new EduVideoException("选择收费但是没有填写价格");
+        }
+
+        // 整理数据格式
+        CourseMarket courseMarket = new CourseMarket();
+        BeanUtils.copyProperties(dto, courseMarket);
+        courseMarket.setId(courseId);
+        boolean b = courseMarketService.saveOrUpdate(courseMarket);
+        return b ? 1 : 0;
     }
 }
