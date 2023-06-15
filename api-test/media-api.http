@@ -14,3 +14,26 @@ Content-Type: application/json
   "pname" : "新章名称 [点击修改]"
 }
 
+
+
+### 查詢文件
+POST {{media_host}}/media/files
+Content-Type: application/json
+
+{
+  "filename": "",
+  "fileType": "001001",
+  "auditStatus": ""
+}
+
+
+### 上传文件
+POST {{media_host}}/media/upload/coursefile
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filedata"; filename="testMinio.png"
+Content-Type: application/octet-stream
+
+< C:\Users\zkp15\Pictures\testMinio.png
+
