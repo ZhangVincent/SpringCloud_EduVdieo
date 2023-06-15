@@ -92,7 +92,7 @@
             tm.media_id mediaId
         FROM
             teachplan one
-                INNER JOIN teachplan two ON one.id = two.parentid
+                LEFT JOIN teachplan two ON one.id = two.parentid
                 LEFT JOIN teachplan_media tm ON tm.teachplan_id = two.id
         WHERE
             one.parentid = 0
