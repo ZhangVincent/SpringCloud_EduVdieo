@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @EnableSwagger2Doc
 @SpringBootApplication
-public class EduvideoContentApiApplication {
+public class ContentApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(EduvideoContentApiApplication.class, args);
+        SpringApplication.run(ContentApiApplication.class, args);
     }
 
 }
