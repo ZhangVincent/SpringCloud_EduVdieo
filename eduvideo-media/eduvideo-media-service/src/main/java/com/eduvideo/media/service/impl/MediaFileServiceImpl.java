@@ -11,14 +11,18 @@ import com.eduvideo.media.model.dto.UploadFileParamsDto;
 import com.eduvideo.media.model.dto.UploadFileResultDto;
 import com.eduvideo.media.model.po.MediaFiles;
 import com.eduvideo.media.service.MediaFileService;
+import com.j256.simplemagic.ContentInfo;
+import com.j256.simplemagic.ContentInfoUtil;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +35,10 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author Mr.M
- * @version 1.0
- * @description TODO
- * @date 2022/9/10 8:58
+/***
+ * @description 媒体文件增删改查接口
+ * @author zkp15
+ * @date 2023/6/16 10:30
  */
 @Service
 public class MediaFileServiceImpl implements MediaFileService {
@@ -101,40 +104,16 @@ public class MediaFileServiceImpl implements MediaFileService {
 
         // 保存文件到minion中 保存文件信息到数据库中 整合数据格式并返回
         try {
-            // byte数组转化成byte字节流
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-            // 由于文件不在系统内，将字节流保存在minion中，使用putobjectargs
-            PutObjectArgs putObjectArgs = PutObjectArgs.builder().bucket(bucket_Files).object(objectName)
-                    //-1表示文件分片按5M(不小于5M,不大于5T),分片数量最大10000，
-                    .stream(byteArrayInputStream, byteArrayInputStream.available(), -1)
-                    .contentType(uploadFileParamsDto.getContentType())
-                    .build();
-            minioClient.putObject(putObjectArgs);
+            // 上传到文件系统
+            addMediaFilesToMinIO(bucket_Files, bytes, objectName);
 
-            // 从数据库中查询文件，根据md5查，如果存在那就不用改，如果不存在，就插入
-            MediaFiles mediaFiles = mediaFilesMapper.selectById(fileId);
-            if (mediaFiles==null){
-                mediaFiles = new MediaFiles();
-                //拷贝基本信息
-                BeanUtils.copyProperties(uploadFileParamsDto, mediaFiles);
-                mediaFiles.setId(fileId);
-                mediaFiles.setFileId(fileId);
-                mediaFiles.setCompanyId(companyId);
-                mediaFiles.setUrl("/" + bucket_Files + "/" + objectName);
-                mediaFiles.setBucket(bucket_Files);
-                mediaFiles.setCreateDate(LocalDateTime.now());
-                mediaFiles.setStatus("1");
-                // 保存到数据库中
-                int insert = mediaFilesMapper.insert(mediaFiles);
-                if (insert<0){
-                    EduVideoException.cast("保存文件信息失败，请重试");
-                }
+            // 上传到数据库中
+            MediaFiles mediaFiles = addMediaFilesToDb(companyId, uploadFileParamsDto, objectName, fileId, bucket_Files);
 
-                // 整理返回体格式
-                UploadFileResultDto uploadFileResultDto = new UploadFileResultDto();
-                BeanUtils.copyProperties(mediaFiles,uploadFileResultDto);
-                return uploadFileResultDto;
-            }
+            // 整理返回体格式
+            UploadFileResultDto uploadFileResultDto = new UploadFileResultDto();
+            BeanUtils.copyProperties(mediaFiles, uploadFileResultDto);
+            return uploadFileResultDto;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,6 +122,99 @@ public class MediaFileServiceImpl implements MediaFileService {
 
         return null;
     }
+
+    /***
+    * @description 将媒体文件信息上传到数据库中
+    * @param companyId
+     * @param uploadFileParamsDto
+     * @param objectName
+     * @param fileId
+     * @param bucket_Files
+    * @return com.eduvideo.media.model.po.MediaFiles
+    * @author zkp15
+    * @date 2023/6/16 11:03
+    */
+    @NotNull
+    private MediaFiles addMediaFilesToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String objectName, String fileId, String bucket_Files) {
+        // 从数据库中查询文件，根据md5查，如果存在那就不用改，如果不存在，就插入
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(fileId);
+        if (mediaFiles == null) {
+            mediaFiles = new MediaFiles();
+            //拷贝基本信息
+            BeanUtils.copyProperties(uploadFileParamsDto, mediaFiles);
+            mediaFiles.setId(fileId);
+            mediaFiles.setFileId(fileId);
+            mediaFiles.setCompanyId(companyId);
+            mediaFiles.setUrl("/" + bucket_Files + "/" + objectName);
+            mediaFiles.setBucket(bucket_Files);
+            mediaFiles.setCreateDate(LocalDateTime.now());
+            mediaFiles.setStatus("1");
+            // 保存到数据库中
+            int insert = mediaFilesMapper.insert(mediaFiles);
+            if (insert < 0) {
+                EduVideoException.cast("保存文件信息到数据库失败，请重试");
+            }
+        }
+        return mediaFiles;
+    }
+
+    /***
+     * @description 上传byte字节流到minio
+     * @param bucket_Files 上传的桶的名称
+     * @param bytes 上传文件的byte数组
+     * @param objectName 上传的路径和名称
+     * @return void
+     * @author zkp15
+     * @date 2023/6/16 10:40
+     */
+    private void addMediaFilesToMinIO(String bucket_Files, byte[] bytes, String objectName) {
+        // byte数组转化成byte字节流
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+
+        // 如果传入的objectName包含".***"，就设置为扩展名，否则为null
+        String extension = null;
+        if (objectName.indexOf(".") >= 0) {
+            extension = objectName.substring(objectName.lastIndexOf("."));
+        }
+        // 根据扩展名获取contenttype
+        String contentType = getMimeTypeByExtension(extension);
+
+        try {
+            // 由于文件不在系统内，将字节流保存在minion中，使用putobjectargs
+            PutObjectArgs putObjectArgs = PutObjectArgs.builder().bucket(bucket_Files).object(objectName)
+                    //-1表示文件分片按5M(不小于5M,不大于5T),分片数量最大10000，
+                    .stream(byteArrayInputStream, byteArrayInputStream.available(), -1)
+                    .contentType(contentType)
+                    .build();
+            minioClient.putObject(putObjectArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            EduVideoException.cast("上传文件到minio出错: "+e.getMessage());
+        }
+    }
+
+    /***
+     * @description 通过文件后缀扩展名获取文件类型contentType
+     * @param extension
+     * @return java.lang.String
+     * @author zkp15
+     * @date 2023/6/16 10:35
+     */
+    private String getMimeTypeByExtension(String extension) {
+        // 默认类型为未知类型的二进制流"application/octet-stream"
+        String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
+        // 如果有extension，就根据 ContentInfoUtil.findExtensionMatch(extension).getMimeType() 的方法获取类型
+        if (StringUtils.isNotEmpty(extension)) {
+            ContentInfo extensionMatch = ContentInfoUtil.findExtensionMatch(extension);
+            if (extensionMatch != null) {
+                contentType = extensionMatch.getMimeType();
+            }
+        }
+
+        return contentType;
+    }
+
 
     /***
      * @description 根据日期拼接目录

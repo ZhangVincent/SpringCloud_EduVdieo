@@ -1,5 +1,6 @@
 package com.eduvideo.media;
 
+import com.eduvideo.base.exception.EduVideoException;
 import io.minio.*;
 import io.minio.errors.MinioException;
 import org.apache.commons.io.IOUtils;

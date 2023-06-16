@@ -6,7 +6,7 @@ package com.eduvideo.base.exception;
  * @description 自定义异常
  * @date 2023/6/13 22:20
  */
-public class EduVideoException extends RuntimeException{
+public class EduVideoException extends RuntimeException {
     private String errMessage;
 
     public EduVideoException() {
@@ -22,11 +22,11 @@ public class EduVideoException extends RuntimeException{
         return errMessage;
     }
 
-    public static void cast(CommonError commonError){
+    public static void cast(CommonError commonError) {
         throw new EduVideoException(commonError.getErrMessage());
     }
 
-    public static void cast( String errMessage){
+    public static void cast(String errMessage) {
         throw new EduVideoException(errMessage);
     }
 }
