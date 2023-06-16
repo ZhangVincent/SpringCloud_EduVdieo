@@ -51,9 +51,15 @@ public class MediaFiles implements Serializable {
     private String tags;
 
     /**
-     * 存储源
+     * 存储目录
      */
     private String bucket;
+
+    /**
+     * 存储路径
+     */
+    private String filePath;
+
 
     /**
      * 文件标识
@@ -64,6 +70,7 @@ public class MediaFiles implements Serializable {
      * 媒资文件访问地址
      */
     private String url;
+
 
     /**
      * 上传人
@@ -102,5 +109,9 @@ public class MediaFiles implements Serializable {
      */
     private String auditMind;
 
+    /**
+     * 文件大小
+     */
+    private Long fileSize;
 
 }
