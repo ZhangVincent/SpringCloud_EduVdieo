@@ -38,6 +38,11 @@ public class MediaProcess implements Serializable {
     private String bucket;
 
     /**
+     * 存储路径
+     */
+    private String filePath;
+
+    /**
      * 状态,1:未处理，视频处理完成更新为2
      */
     private String status;
@@ -59,4 +64,8 @@ public class MediaProcess implements Serializable {
     private String url;
 
 
+    /**
+     * 失败原因
+     */
+    private String errormsg;
 }

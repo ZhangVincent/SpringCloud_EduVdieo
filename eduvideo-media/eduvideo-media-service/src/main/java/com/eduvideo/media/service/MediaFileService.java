@@ -9,6 +9,8 @@ import com.eduvideo.media.model.dto.UploadFileResultDto;
 import com.eduvideo.media.model.po.MediaFiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+
 /**
  * @author zkp15
  * @version 1.0
@@ -100,12 +102,33 @@ public interface MediaFileService {
     public RestResponse mergechunks(Long companyId, String fileMd5, int chunkTotal, UploadFileParamsDto uploadFileParamsDto);
 
     /***
-    * @description 根据文件id查询文件
-    * @param id
-    * @return com.eduvideo.media.model.po.MediaFiles
-    * @author zkp15
-    * @date 2023/6/19 15:30
-    */
+     * @description 根据文件id查询文件
+     * @param id
+     * @return com.eduvideo.media.model.po.MediaFiles
+     * @author zkp15
+     * @date 2023/6/19 15:30
+     */
     public MediaFiles getFileById(String id);
 
+    /***
+     * @description 将文件路径下的文件上传到minio中
+     * @param filePath
+     * @param bucket
+     * @param objectName
+     * @return void
+     * @author zkp15
+     * @date 2023/6/19 21:12
+     */
+    public void addMediaFilesToMinIO(String filePath, String bucket, String objectName);
+
+    /***
+     * @description 从目标桶和路径下载文件到chunkFile中
+     * @param file
+     * @param bucket
+     * @param objectName
+     * @return File
+     * @author zkp15
+     * @date 2023/6/16 19:52
+     */
+    public File downloadFileFromMinIO(File file, String bucket, String objectName);
 }

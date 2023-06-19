@@ -6,11 +6,13 @@ import com.eduvideo.base.exception.EduVideoException;
 import com.eduvideo.base.model.PageParams;
 import com.eduvideo.base.model.PageResult;
 import com.eduvideo.media.mapper.MediaFilesMapper;
+import com.eduvideo.media.mapper.MediaProcessMapper;
 import com.eduvideo.media.model.dto.QueryMediaParamsDto;
 import com.eduvideo.media.model.dto.RestResponse;
 import com.eduvideo.media.model.dto.UploadFileParamsDto;
 import com.eduvideo.media.model.dto.UploadFileResultDto;
 import com.eduvideo.media.model.po.MediaFiles;
+import com.eduvideo.media.model.po.MediaProcess;
 import com.eduvideo.media.service.MediaFileService;
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
@@ -60,6 +62,9 @@ public class MediaFileServiceImpl implements MediaFileService {
 
     @Autowired
     private MediaFileService currentProxy;
+
+    @Autowired
+    private MediaProcessMapper mediaProcessMapper;
 
 
     @Override
@@ -166,6 +171,15 @@ public class MediaFileServiceImpl implements MediaFileService {
                 EduVideoException.cast("保存文件信息到数据库失败，请重试");
             }
 //            int i = 1 / 0;
+
+            //如果是avi视频添加到视频待处理表
+            if(contentType.equals("video/x-msvideo")){
+                MediaProcess mediaProcess = new MediaProcess();
+                BeanUtils.copyProperties(mediaFiles,mediaProcess);
+                mediaProcess.setStatus("1");//未处理
+                mediaProcessMapper.insert(mediaProcess);
+            }
+
         }
         return mediaFiles;
     }
@@ -381,7 +395,7 @@ public class MediaFileServiceImpl implements MediaFileService {
      * @author zkp15
      * @date 2023/6/16 19:52
      */
-    private File downloadFileFromMinIO(File file, String bucket, String objectName) {
+    public File downloadFileFromMinIO(File file, String bucket, String objectName) {
         // 下载文件，通过输入输出字节流的方式保存到file文件，字节流的创建在try()中完成，就不用关闭字节流了
         GetObjectArgs getObjectArgs = GetObjectArgs.builder().bucket(bucket).object(objectName).build();
         try (
