@@ -4,12 +4,14 @@ import com.eduvideo.base.exception.EduVideoException;
 import com.eduvideo.base.model.PageParams;
 import com.eduvideo.base.model.PageResult;
 import com.eduvideo.media.model.dto.QueryMediaParamsDto;
+import com.eduvideo.media.model.dto.RestResponse;
 import com.eduvideo.media.model.dto.UploadFileParamsDto;
 import com.eduvideo.media.model.dto.UploadFileResultDto;
 import com.eduvideo.media.model.po.MediaFiles;
 import com.eduvideo.media.service.MediaFileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -69,5 +71,16 @@ public class MediaFilesController {
         }
         return null;
     }
+
+    @ApiOperation("预览文件")
+    @GetMapping("/preview/{mediaId}")
+    public RestResponse<String> getPlayUrlByMediaId(@PathVariable String mediaId){
+        MediaFiles file = mediaFileService.getFileById(mediaId);
+        if (file==null || StringUtils.isEmpty(file.getUrl())){
+            EduVideoException.cast("视频还没有转码处理");
+        }
+        return RestResponse.success(file.getUrl());
+    }
+
 
 }

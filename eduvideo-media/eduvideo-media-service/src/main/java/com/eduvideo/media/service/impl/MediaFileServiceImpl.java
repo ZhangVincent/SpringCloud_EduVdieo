@@ -133,6 +133,15 @@ public class MediaFileServiceImpl implements MediaFileService {
     @Transactional
     @Override
     public MediaFiles addMediaFilesToDb(Long companyId, UploadFileParamsDto uploadFileParamsDto, String objectName, String fileId, String bucket_Files) {
+        //根据文件名称取出媒体类型
+        //扩展名
+        String extension = null;
+        if(objectName.indexOf(".")>=0){
+            extension = objectName.substring(objectName.lastIndexOf("."));
+        }
+        //获取扩展名对应的媒体类型
+        String contentType = getMimeTypeByExtension(extension);
+
         // 从数据库中查询文件，根据md5查，如果存在那就不用改，如果不存在，就插入
         MediaFiles mediaFiles = mediaFilesMapper.selectById(fileId);
         if (mediaFiles == null) {
@@ -142,7 +151,12 @@ public class MediaFileServiceImpl implements MediaFileService {
             mediaFiles.setId(fileId);
             mediaFiles.setFileId(fileId);
             mediaFiles.setCompanyId(companyId);
-            mediaFiles.setUrl("/" + bucket_Files + "/" + objectName);
+
+            //图片及mp4文件设置url
+            if(contentType.indexOf("image")>=0 || contentType.indexOf("mp4")>=0){
+                mediaFiles.setUrl("/" + bucket_Files + "/" + objectName);
+            }
+
             mediaFiles.setBucket(bucket_Files);
             mediaFiles.setCreateDate(LocalDateTime.now());
             mediaFiles.setStatus("1");
@@ -316,6 +330,11 @@ public class MediaFileServiceImpl implements MediaFileService {
             }
 
         }
+    }
+
+    @Override
+    public MediaFiles getFileById(String id) {
+        return mediaFilesMapper.selectById(id);
     }
 
     private String getFilePathByMd5(String fileMd5, String fileExt) {
