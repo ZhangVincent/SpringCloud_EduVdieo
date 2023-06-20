@@ -73,9 +73,11 @@ public class MediaFileProcessServiceImpl implements MediaFileProcessService {
         //添加到历史记录
         MediaProcessHistory mediaProcessHistory = new MediaProcessHistory();
         BeanUtils.copyProperties(mediaProcess, mediaProcessHistory);
+        Integer count = mediaProcessHistoryMapper.selectCount(null);
+        mediaProcessHistory.setId((long) (count+1));
+
         mediaProcessHistoryMapper.insert(mediaProcessHistory);
         //删除mediaProcess
         mediaProcessMapper.deleteById(mediaProcess.getId());
-
     }
 }

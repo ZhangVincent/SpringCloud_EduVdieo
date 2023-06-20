@@ -1,8 +1,6 @@
 package com.eduvideo.media.model.po;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -32,6 +30,11 @@ public class MediaProcessHistory implements Serializable {
      * 文件名称
      */
     private String filename;
+
+    /**
+     * 状态,1:未处理，视频处理完成更新为2
+     */
+    private String filePath;
 
     /**
      * 存储源

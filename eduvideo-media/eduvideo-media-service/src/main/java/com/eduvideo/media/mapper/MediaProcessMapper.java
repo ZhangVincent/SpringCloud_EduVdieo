@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author itcast
@@ -17,15 +17,15 @@ import java.util.List;
 public interface MediaProcessMapper extends BaseMapper<MediaProcess> {
 
     /***
-    * @description 保证查询到的记录不重复
-    * @param shardTotal
+     * @description 保证查询到的记录不重复
+     * @param shardTotal
      * @param shardindex
      * @param count
-    * @return java.util.List<com.eduvideo.media.model.po.MediaProcess>
-    * @author zkp15
-    * @date 2023/6/19 20:51
-    */
+     * @return java.util.List<com.eduvideo.media.model.po.MediaProcess>
+     * @author zkp15
+     * @date 2023/6/19 20:51
+     */
     @Select("SELECT t.* FROM media_process t WHERE t.id % #{shardTotal} = #{shardindex} and t.status='1' limit #{count}")
-    List<MediaProcess> selectListByShardIndex(@Param("shardTotal") int shardTotal, @Param("shardindex") int shardindex, @Param("count") int count);
+    List<MediaProcess> selectListByShardIndex(@Param("shardindex") int shardindex, @Param("shardTotal") int shardTotal, @Param("count") int count);
 
 }

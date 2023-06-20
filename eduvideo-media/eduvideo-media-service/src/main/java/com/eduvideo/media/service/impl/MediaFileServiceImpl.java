@@ -141,7 +141,7 @@ public class MediaFileServiceImpl implements MediaFileService {
         //根据文件名称取出媒体类型
         //扩展名
         String extension = null;
-        if(objectName.indexOf(".")>=0){
+        if (objectName.indexOf(".") >= 0) {
             extension = objectName.substring(objectName.lastIndexOf("."));
         }
         //获取扩展名对应的媒体类型
@@ -158,7 +158,7 @@ public class MediaFileServiceImpl implements MediaFileService {
             mediaFiles.setCompanyId(companyId);
 
             //图片及mp4文件设置url
-            if(contentType.indexOf("image")>=0 || contentType.indexOf("mp4")>=0){
+            if (contentType.indexOf("image") >= 0 || contentType.indexOf("mp4") >= 0) {
                 mediaFiles.setUrl("/" + bucket_Files + "/" + objectName);
             }
 
@@ -173,10 +173,11 @@ public class MediaFileServiceImpl implements MediaFileService {
 //            int i = 1 / 0;
 
             //如果是avi视频添加到视频待处理表
-            if(contentType.equals("video/x-msvideo")){
+            if (contentType.equals("video/x-msvideo")) {
                 MediaProcess mediaProcess = new MediaProcess();
-                BeanUtils.copyProperties(mediaFiles,mediaProcess);
+                BeanUtils.copyProperties(mediaFiles, mediaProcess);
                 mediaProcess.setStatus("1");//未处理
+                mediaProcess.setFilePath(objectName);
                 mediaProcessMapper.insert(mediaProcess);
             }
 
