@@ -23,7 +23,7 @@ public interface TeachplanService extends IService<Teachplan> {
      * @author zkp15
      * @date 2023/6/14 17:18
      */
-    public List<TeachplanDto> findTeachplayTree(Long courseId);
+    public List<TeachplanDto> findTeachplanTree(Long courseId);
 
     /***
     * @description 对课程教学目录的添加和修改

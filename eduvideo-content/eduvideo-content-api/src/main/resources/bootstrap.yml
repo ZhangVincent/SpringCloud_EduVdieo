@@ -28,6 +28,9 @@ spring:
           - data-id: logging-${spring.profiles.active}.yaml
             group: eduvideo-common
             refresh: true
+          - data-id: freemarker-config-${spring.profiles.active}.yaml
+            group: eduvideo-common
+            refresh: true
   profiles:
     active: dev
 
