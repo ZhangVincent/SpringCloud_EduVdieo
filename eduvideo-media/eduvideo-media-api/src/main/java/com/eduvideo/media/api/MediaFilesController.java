@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 /**
- * @author Mr.M
+ * @author zkp15
  * @version 1.0
  * @description 媒资文件管理接口
  * @date 2022/9/6 11:29

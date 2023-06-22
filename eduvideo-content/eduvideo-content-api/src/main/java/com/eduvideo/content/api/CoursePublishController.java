@@ -2,6 +2,7 @@ package com.eduvideo.content.api;
 
 import com.eduvideo.content.model.dto.CoursePreviewDto;
 import com.eduvideo.content.service.CoursePublishService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,8 +50,25 @@ public class CoursePublishController {
     @ResponseBody
     @PostMapping("/courseaudit/commit/{courseId}")
     public void commitAudit(@PathVariable("courseId") Long courseId){
-
+        Long companyId = 1232141425L;
+        coursePublishService.commitAudit(companyId,courseId);
     }
+
+    /***
+    * @description 课程发布的接口
+    * @param courseId 
+    * @return void
+    * @author zkp15
+    * @date 2023/6/22 10:40
+    */
+    @ApiOperation("课程发布")
+    @ResponseBody
+    @PostMapping ("/coursepublish/{courseId}")
+    public void coursepublish(@PathVariable("courseId") Long courseId){
+        Long companyId = 1232141425L;
+        coursePublishService.publish(companyId,courseId);
+    }
+
 
 }
 

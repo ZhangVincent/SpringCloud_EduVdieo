@@ -60,7 +60,7 @@ public interface MediaFileService {
 
     /**
      * @param fileMd5 文件的md5
-     * @return com.xuecheng.base.model.RestResponse<java.lang.Boolean> false不存在，true存在
+     * @return com.eduvideo.base.model.RestResponse<java.lang.Boolean> false不存在，true存在
      * @description 检查文件是否存在
      * @author zkp15
      * @date 2022/9/13 15:38
@@ -70,7 +70,7 @@ public interface MediaFileService {
     /**
      * @param fileMd5    文件的md5
      * @param chunkIndex 分块序号
-     * @return com.xuecheng.base.model.RestResponse<java.lang.Boolean> false不存在，true存在
+     * @return com.eduvideo.base.model.RestResponse<java.lang.Boolean> false不存在，true存在
      * @description 检查分块是否存在
      * @author zkp15
      * @date 2022/9/13 15:39
@@ -81,7 +81,7 @@ public interface MediaFileService {
      * @param fileMd5 文件md5
      * @param chunk   分块序号
      * @param bytes   文件字节
-     * @return com.xuecheng.base.model.RestResponse
+     * @return com.eduvideo.base.model.RestResponse
      * @description 上传分块
      * @author zkp15
      * @date 2022/9/13 15:50
@@ -94,7 +94,7 @@ public interface MediaFileService {
      * @param fileMd5             文件md5
      * @param chunkTotal          分块总和
      * @param uploadFileParamsDto 文件信息
-     * @return com.xuecheng.base.model.RestResponse
+     * @return com.eduvideo.base.model.RestResponse
      * @description 合并分块
      * @author zkp15
      * @date 2022/9/13 15:56
