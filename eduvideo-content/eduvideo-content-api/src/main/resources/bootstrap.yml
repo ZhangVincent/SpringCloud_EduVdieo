@@ -23,7 +23,7 @@ spring:
             refresh: true
         shared-configs:
           - data-id: feign-${spring.profiles.active}.yaml
-            group: xuecheng-plus-common
+            group: eduvideo-common
             refresh: true
           - data-id: swagger-${spring.profiles.active}.yaml
             group: eduvideo-common

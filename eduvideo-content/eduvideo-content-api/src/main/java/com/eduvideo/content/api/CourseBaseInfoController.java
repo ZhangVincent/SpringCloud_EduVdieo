@@ -9,9 +9,11 @@ import com.eduvideo.content.model.dto.QueryCourseParamsDto;
 import com.eduvideo.content.model.dto.EditCourseDto;
 import com.eduvideo.content.model.po.CourseBase;
 import com.eduvideo.content.service.CourseBaseService;
+import com.eduvideo.content.util.SecurityUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,6 +67,8 @@ public class CourseBaseInfoController {
     */
     @GetMapping("/course/{courseId}")
     public CourseBaseInfoDto getCourseBaseById(@PathVariable Long courseId) {
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        System.out.println(user);
         return courseBaseService.getCourseBaseById(courseId);
     }
 
@@ -91,6 +95,11 @@ public class CourseBaseInfoController {
     @DeleteMapping("course/{courseId}")
     public void removeCourseBase(@PathVariable Long courseId){
         Long companyId=1232141425L;
+        //取出当前用户身份
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        System.out.println(user);
+
         boolean b = courseBaseService.removeCourseBase(companyId, courseId);
     }
 }

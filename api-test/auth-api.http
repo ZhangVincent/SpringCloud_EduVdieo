@@ -1,0 +1,26 @@
+### 授权码模式
+### 第一步申请授权码(浏览器请求)/oauth/authorize?client_id=c1&response_type=code&scope=all&redirect_uri=http://www.51xuecheng.cn
+### 第二步申请令牌
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=authorization_code&code=jmZK7Z&redirect_uri=http://www.eduvideo.cn
+
+
+### 密码模式
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username=vincent&password=1111
+
+
+###校验jwt令牌
+POST {{auth_host}}/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZWR1dmlkZW8iXSwidXNlcl9uYW1lIjoie1wiY3JlYXRlVGltZVwiOlwiMjAyMy0wNi0yM1QyMjoyOTo0OFwiLFwiaWRcIjpcIjUzXCIsXCJuYW1lXCI6XCJ2aW5jZW50XCIsXCJzdGF0dXNcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJ2aW5jZW50XCIsXCJ1dHlwZVwiOlwiMTAxMDAzXCJ9Iiwic2NvcGUiOlsiYWxsIl0sImV4cCI6MTY4NzU0MDMzNywiYXV0aG9yaXRpZXMiOlsicDEiXSwianRpIjoiODE3YjFmNmMtYTczZS00YWFkLTg3OGUtOGY0NTQzMjQxZTNhIiwiY2xpZW50X2lkIjoiWGNXZWJBcHAifQ.37yD2d1awjADYM6Clitp2L5lDBLOKJjFieHfd4mivf4
+
+### 测试content认证授权
+GET http://localhost:63040/content/course/2
+
+### 携带token访问资源服务
+GET http://localhost:63040/content/course/124
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZWR1dmlkZW8iXSwidXNlcl9uYW1lIjoiemhhbmdzYW4iLCJzY29wZSI6WyJhbGwiXSwiZXhwIjoxNjg3NTIzMTI0LCJhdXRob3JpdGllcyI6WyJwMSJdLCJqdGkiOiI1NTFhMmZhOS01YzY1LTQ2ZWEtYmUzYS04N2M2YjcyZGM0NjIiLCJjbGllbnRfaWQiOiJYY1dlYkFwcCJ9.mJrzGDsY_qMrY5WpRjFU3sCA3hVxgoqxAr65KsMNS48
+
+### 携带token访问资源服务
+GET {{gateway_host}}/content/course/124
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZWR1dmlkZW8iXSwidXNlcl9uYW1lIjoie1wiY3JlYXRlVGltZVwiOlwiMjAyMy0wNi0yM1QyMjoyOTo0OFwiLFwiaWRcIjpcIjUzXCIsXCJuYW1lXCI6XCJ2aW5jZW50XCIsXCJzdGF0dXNcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJ2aW5jZW50XCIsXCJ1dHlwZVwiOlwiMTAxMDAzXCJ9Iiwic2NvcGUiOlsiYWxsIl0sImV4cCI6MTY4NzU0MDMzNywiYXV0aG9yaXRpZXMiOlsicDEiXSwianRpIjoiODE3YjFmNmMtYTczZS00YWFkLTg3OGUtOGY0NTQzMjQxZTNhIiwiY2xpZW50X2lkIjoiWGNXZWJBcHAifQ.37yD2d1awjADYM6Clitp2L5lDBLOKJjFieHfd4mivf4
+
+### 携带token访问资源服务
+GET {{gateway_host}}/content/course/124
