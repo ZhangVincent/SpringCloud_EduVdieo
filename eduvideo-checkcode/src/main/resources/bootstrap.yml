@@ -1,6 +1,6 @@
 spring:
   application:
-    name: auth-service
+    name: checkcode
   cloud:
     nacos:
       server-addr: centos:8848
@@ -17,9 +17,6 @@ spring:
             group: eduvideo-common
             refresh: true
           - data-id: logging-${spring.profiles.active}.yaml
-            group: eduvideo-common
-            refresh: true
-          - data-id: feign-${spring.profiles.active}.yaml
             group: eduvideo-common
             refresh: true
 

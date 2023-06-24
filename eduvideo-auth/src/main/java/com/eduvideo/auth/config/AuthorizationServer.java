@@ -15,7 +15,7 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 import javax.annotation.Resource;
 
 /**
- * @author Mr.M
+ * @author zkp15
  * @version 1.0
  * @description 授权服务器配置
  * @date 2022/9/26 22:25

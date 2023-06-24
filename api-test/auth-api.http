@@ -1,5 +1,5 @@
 ### 授权码模式
-### 第一步申请授权码(浏览器请求)/oauth/authorize?client_id=c1&response_type=code&scope=all&redirect_uri=http://www.51xuecheng.cn
+### 第一步申请授权码(浏览器请求)/oauth/authorize?client_id=c1&response_type=code&scope=all&redirect_uri=http://www.51eduvideo.cn
 ### 第二步申请令牌
 POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=authorization_code&code=jmZK7Z&redirect_uri=http://www.eduvideo.cn
 
@@ -9,7 +9,7 @@ POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&gr
 
 
 ###校验jwt令牌
-POST {{auth_host}}/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZWR1dmlkZW8iXSwidXNlcl9uYW1lIjoie1wiY3JlYXRlVGltZVwiOlwiMjAyMy0wNi0yM1QyMjoyOTo0OFwiLFwiaWRcIjpcIjUzXCIsXCJuYW1lXCI6XCJ2aW5jZW50XCIsXCJzdGF0dXNcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJ2aW5jZW50XCIsXCJ1dHlwZVwiOlwiMTAxMDAzXCJ9Iiwic2NvcGUiOlsiYWxsIl0sImV4cCI6MTY4NzU0MDMzNywiYXV0aG9yaXRpZXMiOlsicDEiXSwianRpIjoiODE3YjFmNmMtYTczZS00YWFkLTg3OGUtOGY0NTQzMjQxZTNhIiwiY2xpZW50X2lkIjoiWGNXZWJBcHAifQ.37yD2d1awjADYM6Clitp2L5lDBLOKJjFieHfd4mivf4
+POST {{auth_host}}/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZWR1dmlkZW8iXSwidXNlcl9uYW1lIjoie1wiY3JlYXRlVGltZVwiOlwiMjAyMy0wNi0yM1QyMjoyOTo0OFwiLFwiaWRcIjpcIjUzXCIsXCJuYW1lXCI6XCJ2aW5jZW50XCIsXCJwZXJtaXNzaW9uc1wiOltdLFwic3RhdHVzXCI6XCIxXCIsXCJ1c2VybmFtZVwiOlwidmluY2VudFwiLFwidXR5cGVcIjpcIjEwMTAwM1wifSIsInNjb3BlIjpbImFsbCJdLCJleHAiOjE2ODc2MDkxMzIsImF1dGhvcml0aWVzIjpbInAxIl0sImp0aSI6ImQxMWEyZDRjLWZkNzAtNGYwYy1iYmZiLTRiY2Q0M2EyNDNjZSIsImNsaWVudF9pZCI6IlhjV2ViQXBwIn0.sfLyr-zYQxGZJnXHtY8f_GAR27432IEHNP1o9I_yN_8
 
 ### 测试content认证授权
 GET http://localhost:63040/content/course/2
@@ -20,7 +20,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZWR1dmlkZ
 
 ### 携带token访问资源服务
 GET {{gateway_host}}/content/course/124
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZWR1dmlkZW8iXSwidXNlcl9uYW1lIjoie1wiY3JlYXRlVGltZVwiOlwiMjAyMy0wNi0yM1QyMjoyOTo0OFwiLFwiaWRcIjpcIjUzXCIsXCJuYW1lXCI6XCJ2aW5jZW50XCIsXCJzdGF0dXNcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJ2aW5jZW50XCIsXCJ1dHlwZVwiOlwiMTAxMDAzXCJ9Iiwic2NvcGUiOlsiYWxsIl0sImV4cCI6MTY4NzU0MDMzNywiYXV0aG9yaXRpZXMiOlsicDEiXSwianRpIjoiODE3YjFmNmMtYTczZS00YWFkLTg3OGUtOGY0NTQzMjQxZTNhIiwiY2xpZW50X2lkIjoiWGNXZWJBcHAifQ.37yD2d1awjADYM6Clitp2L5lDBLOKJjFieHfd4mivf4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZWR1dmlkZW8iXSwidXNlcl9uYW1lIjoie1wiY3JlYXRlVGltZVwiOlwiMjAyMy0wNi0yM1QyMjoyOTo0OFwiLFwiaWRcIjpcIjUzXCIsXCJuYW1lXCI6XCJ2aW5jZW50XCIsXCJwZXJtaXNzaW9uc1wiOltdLFwic3RhdHVzXCI6XCIxXCIsXCJ1c2VybmFtZVwiOlwidmluY2VudFwiLFwidXR5cGVcIjpcIjEwMTAwM1wifSIsInNjb3BlIjpbImFsbCJdLCJleHAiOjE2ODc2MDIyNTUsImF1dGhvcml0aWVzIjpbInAxIl0sImp0aSI6IjQ5ZDNlMTA1LTQzZjMtNGU4My1hMmM3LTViYWJhYmFhNWRlMSIsImNsaWVudF9pZCI6IlhjV2ViQXBwIn0.ZcbZo7hgCVXDtjlImtIRqZ5Zw9o0DMn_PWsfKkRMKrY
 
 ### 携带token访问资源服务
 GET {{gateway_host}}/content/course/124
+
+
+################扩展认证请求参数后######################
+###密码模式
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username={"username":"vincent","authType":"password","password":"1111"}
+
+
+

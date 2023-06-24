@@ -1,0 +1,5 @@
+### 申请验证码
+POST {{checkcode_host}}/checkcode/pic
+
+### 校验验证码
+POST {{checkcode_host}}/checkcode/verify?key=checkcode:c78bdff4ef114b5fb1a79ccbe6ba5a6b&code=DQUK
