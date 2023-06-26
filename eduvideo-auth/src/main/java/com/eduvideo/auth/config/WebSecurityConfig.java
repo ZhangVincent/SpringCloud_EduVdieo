@@ -73,7 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     public static void main(String[] args) {
-        String password = "XcWebApp";
+        String password = "1111";
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         for(int i=0;i<10;i++) {
             //每个计算出的Hash值都不一样

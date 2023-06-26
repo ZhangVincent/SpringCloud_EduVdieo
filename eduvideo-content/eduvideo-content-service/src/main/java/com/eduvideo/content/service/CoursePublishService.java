@@ -63,4 +63,13 @@ public interface CoursePublishService extends IService<CoursePublish> {
      * @date 2023/6/22 18:17
      */
     public void  uploadCourseHtml(Long courseId,File file);
+
+    /***
+    * @description 根据课程id查询已发布课程
+    * @param courseId
+    * @return com.eduvideo.content.model.po.CoursePublish
+    * @author zkp15
+    * @date 2023/6/26 19:57
+    */
+    public CoursePublish getCoursePublish(Long courseId);
 }

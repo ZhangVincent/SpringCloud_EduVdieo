@@ -1,6 +1,7 @@
 package com.eduvideo.content.api;
 
 import com.eduvideo.content.model.dto.CoursePreviewDto;
+import com.eduvideo.content.model.po.CoursePublish;
 import com.eduvideo.content.service.CoursePublishService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,51 +25,65 @@ public class CoursePublishController {
     private CoursePublishService coursePublishService;
 
     /***
-    * @description 课程预览静态页面
-    * @param courseId
-    * @return org.springframework.web.servlet.ModelAndView
-    * @author zkp15
-    * @date 2023/6/20 21:52
-    */
+     * @description 课程预览静态页面
+     * @param courseId
+     * @return org.springframework.web.servlet.ModelAndView
+     * @author zkp15
+     * @date 2023/6/20 21:52
+     */
     @GetMapping("/coursepreview/{courseId}")
-    public ModelAndView preview(@PathVariable("courseId") Long courseId){
+    public ModelAndView preview(@PathVariable("courseId") Long courseId) {
 
         ModelAndView modelAndView = new ModelAndView();
         CoursePreviewDto coursePreviewInfo = coursePublishService.getCoursePreviewInfo(courseId);
-        modelAndView.addObject("model",coursePreviewInfo);
+        modelAndView.addObject("model", coursePreviewInfo);
         modelAndView.setViewName("course_template");
         return modelAndView;
     }
 
     /***
-    * @description 提交课程审核接口
-    * @param courseId
-    * @return void
-    * @author zkp15
-    * @date 2023/6/20 23:08
-    */
+     * @description 提交课程审核接口
+     * @param courseId
+     * @return void
+     * @author zkp15
+     * @date 2023/6/20 23:08
+     */
     @ResponseBody
     @PostMapping("/courseaudit/commit/{courseId}")
-    public void commitAudit(@PathVariable("courseId") Long courseId){
+    public void commitAudit(@PathVariable("courseId") Long courseId) {
         Long companyId = 1232141425L;
-        coursePublishService.commitAudit(companyId,courseId);
+        coursePublishService.commitAudit(companyId, courseId);
     }
 
     /***
-    * @description 课程发布的接口
-    * @param courseId 
-    * @return void
-    * @author zkp15
-    * @date 2023/6/22 10:40
-    */
+     * @description 课程发布的接口
+     * @param courseId
+     * @return void
+     * @author zkp15
+     * @date 2023/6/22 10:40
+     */
     @ApiOperation("课程发布")
     @ResponseBody
-    @PostMapping ("/coursepublish/{courseId}")
-    public void coursepublish(@PathVariable("courseId") Long courseId){
+    @PostMapping("/coursepublish/{courseId}")
+    public void coursepublish(@PathVariable("courseId") Long courseId) {
         Long companyId = 1232141425L;
-        coursePublishService.publish(companyId,courseId);
+        coursePublishService.publish(companyId, courseId);
     }
 
+    /***
+    * @description 根据课程id查询已发布课程
+    * @param courseId
+    * @return com.eduvideo.content.model.po.CoursePublish
+    * @author zkp15
+    * @date 2023/6/26 19:57
+    */
+    @ApiOperation("查询课程发布信息")
+    @ResponseBody
+    @GetMapping("/r/coursepublish/{courseId}")
+    public CoursePublish getCoursepublish(@PathVariable("courseId") Long courseId) {
+        CoursePublish coursePublish = coursePublishService.getCoursePublish(courseId);
+        return coursePublish;
+    }
 
 }
 

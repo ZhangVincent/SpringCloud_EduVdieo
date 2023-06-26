@@ -13,6 +13,7 @@ import com.eduvideo.content.util.SecurityUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,7 @@ public class CourseBaseInfoController {
      */
     @ApiOperation("课程查询接口")
     @PostMapping("/course/list")
+    @PreAuthorize("hasAuthority('course_find_list')")
     public PageResult<CourseBase> list(PageParams pageParams, @RequestBody QueryCourseParamsDto queryCourseParamsDto) {
         PageResult<CourseBase> courseBasePageResult = courseBaseService.queryCourseBaseList(pageParams, queryCourseParamsDto);
         return courseBasePageResult;
@@ -54,7 +56,9 @@ public class CourseBaseInfoController {
     */
     @PostMapping("/course")
     public CourseBaseInfoDto createCourseBase(@RequestBody @Validated({ValidationGroups.Insert.class}) AddCourseDto addCourseDto) {
-        Long companyId = 1232141425L;
+//        Long companyId = 1232141425L;
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        Long companyId = Long.parseLong(user.getCompanyId());
         return courseBaseService.createCourseBase(companyId, addCourseDto);
     }
 

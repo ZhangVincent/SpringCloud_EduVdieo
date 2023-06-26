@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 /**
@@ -22,18 +23,27 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(EduVideoException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public RestErrorResponse doCustomException(EduVideoException e){
-        log.error("【自定义异常】{}",e.getErrMessage(),e);
+    public RestErrorResponse doCustomException(EduVideoException e) {
+        log.error("【自定义异常】{}", e.getErrMessage(), e);
 
         return new RestErrorResponse(e.getErrMessage());
 
     }
 
     @ResponseBody
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public RestErrorResponse doMethodArgumentNotValidException(AccessDeniedException e) {
+        log.error("【权限异常】{}", e.getMessage(), e);
+        e.printStackTrace();
+        return new RestErrorResponse("没有操作此功能的权限");
+    }
+
+    @ResponseBody
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public RestErrorResponse doException(Exception e) {
-        log.error("【系统异常】{}",e.getMessage(),e);
+        log.error("【系统异常】{}", e.getMessage(), e);
 
         return new RestErrorResponse(CommonError.UNKOWN_ERROR.getErrMessage());
     }
@@ -49,7 +59,7 @@ public class GlobalExceptionHandler {
         fieldErrors.stream().forEach(err -> {
             errMsg.append(err.getDefaultMessage()).append(", ");
         });
-        log.error("【数据异常】{}",errMsg.toString());
+        log.error("【数据异常】{}", errMsg.toString());
 
         return new RestErrorResponse(errMsg.toString());
     }
