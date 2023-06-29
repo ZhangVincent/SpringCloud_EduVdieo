@@ -47,33 +47,39 @@ public class ReceivePayNotifyService {
         MqMessage mqMessage = JSON.parseObject(message, MqMessage.class);
         log.debug("学习中心服务接收支付结果:{}", mqMessage);
 
-        //获取选课记录id
-        String choosecourseId = mqMessage.getBusinessKey1();
+        //消息类型
+        String messageType = mqMessage.getMessageType();
+        //订单类型,60201表示购买课程
+        String businessKey2 = mqMessage.getBusinessKey2();
+        //这里只处理支付结果通知
+        if (PayNotifyConfig.MESSAGE_TYPE.equals(messageType) && "60201".equals(businessKey2)) {
+            //获取选课记录id
+            String choosecourseId = mqMessage.getBusinessKey1();
 
-        //添加选课
-        boolean b = myCourseTablesService.saveChooseCourseStauts(choosecourseId);
-        if(b){
-            //向订单服务回复
-            send(mqMessage);
+            //添加选课
+            boolean b = myCourseTablesService.saveChooseCourseStauts(choosecourseId);
+            if (b) {
+                //向订单服务回复
+                send(mqMessage);
+            }
         }
 
     }
 
     /**
-     * @description 回复消息
-     * @param message  回复消息
+     * @param message 回复消息
      * @return void
+     * @description 回复消息
      * @author zkp15
      * @date 2022/9/20 9:43
      */
-    public void send(MqMessage message){
+    public void send(MqMessage message) {
         //转json
         String msg = JSON.toJSONString(message);
         // 发送消息
         rabbitTemplate.convertAndSend(PayNotifyConfig.PAYNOTIFY_REPLY_QUEUE, msg);
-        log.debug("学习中心服务向订单服务回复消息:{}",message);
+        log.debug("学习中心服务向订单服务回复消息:{}", message);
     }
-
 
 
 }

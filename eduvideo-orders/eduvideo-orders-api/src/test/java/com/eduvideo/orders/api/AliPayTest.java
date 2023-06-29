@@ -37,7 +37,7 @@ public class AliPayTest {
         AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
         JSONObject bizContent = new JSONObject();
         bizContent.put("out_trade_no", "1577182653344460800");
-//bizContent.put("trade_no", "2014112611001004680073956707");
+//        bizContent.put("trade_no", "2014112611001004680073956707");
         request.setBizContent(bizContent.toString());
         AlipayTradeQueryResponse response = alipayClient.execute(request);
         if (response.isSuccess()) {

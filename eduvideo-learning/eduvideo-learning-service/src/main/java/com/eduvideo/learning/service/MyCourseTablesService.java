@@ -39,9 +39,22 @@ public interface MyCourseTablesService {
      */
     public XcCourseTablesDto getLeanringStatus(String userId, Long courseId);
 
-
+    /***
+    * @description 更新付费课程状态为已支付，并添加到课程表
+    * @param choosecourseId
+    * @return boolean
+    * @author zkp15
+    * @date 2023/6/28 17:53
+    */
     public boolean saveChooseCourseStauts(String choosecourseId);
 
+    /***
+    * @description 获取我的课程表
+    * @param params
+    * @return com.eduvideo.base.model.PageResult<com.eduvideo.learning.model.dto.MyCourseTableItemDto>
+    * @author zkp15
+    * @date 2023/6/28 20:55
+    */
     public PageResult<MyCourseTableItemDto> mycourestabls(MyCourseTableParams params);
 
 }

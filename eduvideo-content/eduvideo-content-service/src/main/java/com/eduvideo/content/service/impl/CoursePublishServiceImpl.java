@@ -24,12 +24,17 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -39,6 +44,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -75,12 +82,80 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
     @Autowired
     private MediaServiceClient mediaServiceClient;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedissonClient redissonClient;
+
     @Override
     public CoursePreviewDto getCoursePreviewInfo(Long courseId) {
         CoursePreviewDto coursePreviewDto = new CoursePreviewDto();
         coursePreviewDto.setCourseBase(courseBaseService.getCourseBaseById(courseId));
         coursePreviewDto.setTeachplans(teachplanService.findTeachplanTree(courseId));
         return coursePreviewDto;
+    }
+
+//    @Override
+//    public CoursePreviewDto getCoursePreviewInfoCache(Long courseId) {
+//        //查询缓存
+//        Object jsonObj = redisTemplate.opsForValue().get("course:" + courseId);
+//        if (jsonObj != null) {
+//            String jsonString = jsonObj.toString();
+////            System.out.println("=================从缓存查=================");
+//            CoursePreviewDto coursePreviewDto = JSON.parseObject(jsonString, CoursePreviewDto.class);
+//            return coursePreviewDto;
+//        } else {
+////            System.out.println("从数据库查询...");
+//            //从数据库查询
+//            CoursePreviewDto coursePreviewDto = new CoursePreviewDto();
+//            coursePreviewDto.setCourseBase(courseBaseService.getCourseBaseById(courseId));
+//            coursePreviewDto.setTeachplans(teachplanService.findTeachplanTree(courseId));
+////            if(coursePreviewDto!=null){
+//            redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePreviewDto), 300 + new Random().nextInt(100), TimeUnit.SECONDS);
+////            }
+//            return coursePreviewDto;
+//        }
+//
+//    }
+
+    // 分布式redis锁，Redisson
+    @Override
+    public CoursePreviewDto getCoursePreviewInfoCache(Long courseId) {
+        //查询缓存
+        String jsonString = (String) redisTemplate.opsForValue().get("course:" + courseId);
+        if (!StringUtils.isEmpty(jsonString)) {
+            System.out.println("=================从缓存查=================");
+            CoursePreviewDto coursePreviewDto = JSON.parseObject(jsonString, CoursePreviewDto.class);
+            return coursePreviewDto;
+        } else {
+            //每门课程设置一个锁
+            RLock lock = redissonClient.getLock("coursequerylock:" + courseId);
+            //获取锁
+            lock.lock();
+            try {
+                jsonString = (String) redisTemplate.opsForValue().get("course:" + courseId);
+                if (!StringUtils.isEmpty(jsonString)) {
+                    CoursePreviewDto coursePreviewDto = JSON.parseObject(jsonString, CoursePreviewDto.class);
+                    return coursePreviewDto;
+                }
+
+                System.out.println("从数据库查询...");
+                //从数据库查询
+                CoursePreviewDto coursePreviewDto = new CoursePreviewDto();
+                coursePreviewDto.setCourseBase(courseBaseService.getCourseBaseById(courseId));
+                coursePreviewDto.setTeachplans(teachplanService.findTeachplanTree(courseId));
+
+                redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePreviewDto), 300 + new Random().nextInt(100), TimeUnit.SECONDS);
+
+                return coursePreviewDto;
+            } finally {
+                //释放锁
+                lock.unlock();
+            }
+
+        }
+
     }
 
     @Override
@@ -224,7 +299,7 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
     public File generateCourseHtml(Long courseId) {
 
         //静态化文件
-        File htmlFile  = null;
+        File htmlFile = null;
 
         try {
             //配置freemarker
@@ -254,13 +329,13 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
             //将静态化内容输出到文件中
             InputStream inputStream = IOUtils.toInputStream(content);
             //创建静态化文件
-            htmlFile = File.createTempFile("course",".html");
-            log.debug("课程静态化，生成静态文件:{}",htmlFile.getAbsolutePath());
+            htmlFile = File.createTempFile("course", ".html");
+            log.debug("课程静态化，生成静态文件:{}", htmlFile.getAbsolutePath());
             //输出流
             FileOutputStream outputStream = new FileOutputStream(htmlFile);
             IOUtils.copy(inputStream, outputStream);
         } catch (Exception e) {
-            log.error("课程静态化异常:{}",e.toString());
+            log.error("课程静态化异常:{}", e.toString());
             EduVideoException.cast("课程静态化异常");
         }
 
@@ -270,16 +345,16 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
     @Override
     public void uploadCourseHtml(Long courseId, File file) {
         MultipartFile multipartFile = MultipartSupportConfig.getMultipartFile(file);
-        String course = mediaServiceClient.uploadFile(multipartFile, "course",courseId+".html");
-        if(course==null){
+        String course = mediaServiceClient.uploadFile(multipartFile, "course", courseId + ".html");
+        if (course == null) {
             EduVideoException.cast("上传静态文件异常");
         }
     }
 
     @Override
-    public CoursePublish getCoursePublish(Long courseId){
+    public CoursePublish getCoursePublish(Long courseId) {
         CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
-        return coursePublish ;
+        return coursePublish;
     }
 
 }

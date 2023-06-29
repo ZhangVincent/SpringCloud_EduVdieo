@@ -1,6 +1,7 @@
 package com.eduvideo.learning.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eduvideo.base.exception.CommonError;
 import com.eduvideo.base.exception.EduVideoException;
 import com.eduvideo.base.exception.CommonError;
@@ -118,6 +119,7 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
 
     }
 
+    @Transactional
     @Override
     public boolean saveChooseCourseStauts(String choosecourseId) {
         XcChooseCourse xcChooseCourse = xcChooseCourseMapper.selectById(choosecourseId);
@@ -296,5 +298,23 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
         return pageResult;
 
     }
+
+//    public PageResult<XcCourseTables> mycourestabls( MyCourseTableParams params){
+//        //页码
+//        long pageNo = params.getPage();
+//        //每页记录数,固定为4
+//        long pageSize = 4;
+//        //分页条件
+//        Page<XcCourseTables> page = new Page<>(pageNo, pageSize);
+//        //分页查询
+//        Page<XcCourseTables> pageResult = courseTablesMapper.selectPage(page, null);
+//        List<XcCourseTables> records = pageResult.getRecords();
+//        //记录总数
+//        long total = pageResult.getTotal();
+//        PageResult<XcCourseTables> courseTablesResult = new PageResult<>(records, total, pageNo, pageSize);
+//        return courseTablesResult;
+//
+//    }
+
 
 }

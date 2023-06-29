@@ -24,6 +24,15 @@ public interface CoursePublishService extends IService<CoursePublish> {
      * @date 2023/6/20 21:57
      */
     public CoursePreviewDto getCoursePreviewInfo(Long courseId);
+    
+    /***
+    * @description 通过redis获取课程预览基本信息
+    * @param courseId
+    * @return com.eduvideo.content.model.dto.CoursePreviewDto
+    * @author zkp15
+    * @date 2023/6/29 17:00
+    */
+    public CoursePreviewDto getCoursePreviewInfoCache(Long courseId);
 
     /***
      * @description 提交审核的方法
